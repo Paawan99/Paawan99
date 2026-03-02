@@ -155,9 +155,10 @@
             min-width: 100%;
             height: 100%;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             padding: 2rem;
+            padding-top: 1rem;
             background: white;
             overflow-y: auto;
         }
@@ -593,19 +594,19 @@
         /* Games Grid */
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
             width: 100%;
         }
 
         .game-card {
             background: #f8fafc;
             border-radius: 16px;
-            padding: 2rem;
+            padding: 1.5rem;
             border: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.5rem;
         }
 
         .game-card h3 {
@@ -1065,6 +1066,250 @@
                 flex: 0 0 100%;
             }
         }
+
+        /* Live Odds Scanner Styles */
+        .live-odds-container {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .live-odds-header {
+            border-bottom: 2px solid #f0f9fc;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .live-odds-header h3 {
+            font-size: 1.3rem;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .live-odds-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .control-group select,
+        .control-group input {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: #f9fafb;
+            color: #1f2937;
+            transition: all 0.2s ease;
+        }
+
+        .control-group select:hover,
+        .control-group input:hover {
+            border-color: #0ea5e9;
+            background: #ffffff;
+        }
+
+        .control-group select:focus,
+        .control-group input:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        #liveOddsResults {
+            min-height: 100px;
+        }
+
+        .odds-game-card {
+            background: linear-gradient(135deg, #f0f9fc 0%, #ffffff 100%);
+            border: 1px solid #e0f2fe;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .odds-game-card:hover {
+            box-shadow: 0 8px 16px rgba(14, 165, 233, 0.1);
+            border-color: #0ea5e9;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .game-title {
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 1.05rem;
+        }
+
+        .game-time {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .arbitrage-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+
+        .arbitrage-badge.profit {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .arbitrage-badge.no-arb {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .odds-bookmakers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .bookmaker-odds {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .bookmaker-name {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .odds-value {
+            font-size: 1.3rem;
+            color: #0ea5e9;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .odds-label {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .arbitrage-details {
+            background: #f9fafb;
+            border-left: 4px solid #0ea5e9;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+        }
+
+        .arb-profit-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .arb-label {
+            color: #64748b;
+        }
+
+        .arb-value {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .arb-profit-green {
+            color: #059669;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-top-color: #0ea5e9;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-left: 4px solid #ef4444;
+            padding: 1rem;
+            border-radius: 8px;
+            color: #991b1b;
+            margin-bottom: 1rem;
+        }
+
+        .platform-fees-container {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .arbitrage-calculator-manual {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .live-odds-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .odds-bookmakers {
+                grid-template-columns: 1fr;
+            }
+
+            .game-info {
+                flex-direction: column;
+            }
+
+            .arbitrage-badge {
+                align-self: start;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1482,59 +1727,123 @@
                     </div>
 
                     <div class="arbitrage-section">
-                        <div class="arbitrage-card">
-                            <h3>Arbitrage Calculator</h3>
-                            <div class="form-group">
-                                <label>Platform 1</label>
-                                <select id="platform1" style="padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px;">
-                                    <option>bet365</option>
-                                    <option>FanDuel</option>
-                                    <option>DraftKings</option>
-                                </select>
+                        <!-- Live Odds Scanner Section -->
+                        <div class="live-odds-container">
+                            <div class="live-odds-header">
+                                <h3>Live Odds Scanner</h3>
+                                <p style="color: #64748b; font-size: 0.9rem; margin-top: 0.25rem;">Real-time arbitrage detection across bookmakers</p>
                             </div>
-                            <div class="form-group">
-                                <label>Platform 1 Odds</label>
-                                <input type="number" id="odds1" placeholder="e.g. 1.50" value="1.50" step="0.01">
+
+                            <div class="live-odds-controls">
+                                <div class="control-group">
+                                    <label>Sport</label>
+                                    <select id="sportSelector" style="padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px;">
+                                        <option value="americanfootball_nfl">NFL (American Football)</option>
+                                        <option value="basketball_nba">NBA (Basketball)</option>
+                                        <option value="icehockey_nhl">NHL (Ice Hockey)</option>
+                                        <option value="baseball_mlb">MLB (Baseball)</option>
+                                        <option value="soccer_epl">Soccer/EPL</option>
+                                        <option value="mma_mixed_martial_arts">MMA/UFC</option>
+                                    </select>
+                                </div>
+                                <div class="control-group">
+                                    <label>Data Source</label>
+                                    <select id="dataSourceSelector" style="padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px;">
+                                        <option value="live">Live API Data</option>
+                                        <option value="demo">Demo Data (Realistic Sample)</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary" onclick="fetchLiveOdds()" style="width: 100%;">
+                                    <span id="fetchButtonText">Fetch Live Odds</span>
+                                    <span id="fetchSpinner" style="display: none; margin-left: 0.5rem;">⏳</span>
+                                </button>
                             </div>
-                            <div class="form-group">
-                                <label>Platform 2</label>
-                                <select id="platform2" style="padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px;">
-                                    <option>FanDuel</option>
-                                    <option>DraftKings</option>
-                                    <option>bet365</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Platform 2 Odds</label>
-                                <input type="number" id="odds2" placeholder="e.g. 2.80" value="2.80" step="0.01">
-                            </div>
-                            <div class="form-group">
-                                <label>Total Stake ($)</label>
-                                <input type="number" id="totalStake" placeholder="e.g. 1000" value="1000" step="50">
-                            </div>
-                            <button class="btn btn-primary" onclick="calculateArbitrage()" style="width: 100%;">Calculate</button>
+
+                            <div id="liveOddsResults" style="margin-top: 2rem;"></div>
                         </div>
 
-                        <div class="arbitrage-card">
-                            <h3>Arbitrage Results</h3>
-                            <div class="arbitrage-meter">
-                                <div class="meter-label">
-                                    <span>Arbitrage Opportunity</span>
-                                    <span id="arbPercentage">0%</span>
+                        <!-- Platform Fees Reference Cards -->
+                        <div class="platform-fees-container" style="margin-top: 2rem;">
+                            <h4 style="margin-bottom: 1rem; color: #1f2937;">Platform Fees Reference</h4>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                                <div style="background: #f0f9fc; padding: 1rem; border-radius: 8px; border: 1px solid #e0f2fe;">
+                                    <div style="font-weight: 600; color: #0ea5e9;">bet365</div>
+                                    <div style="color: #64748b; margin-top: 0.5rem; font-size: 0.9rem;">Fee: 0%</div>
                                 </div>
-                                <div class="meter-bar">
-                                    <div class="meter-fill" id="arbMeter" style="width: 0%"></div>
+                                <div style="background: #f0f9fc; padding: 1rem; border-radius: 8px; border: 1px solid #e0f2fe;">
+                                    <div style="font-weight: 600; color: #0ea5e9;">BetMGM</div>
+                                    <div style="color: #64748b; margin-top: 0.5rem; font-size: 0.9rem;">Fee: 1%</div>
+                                </div>
+                                <div style="background: #f0f9fc; padding: 1rem; border-radius: 8px; border: 1px solid #e0f2fe;">
+                                    <div style="font-weight: 600; color: #0ea5e9;">Betway</div>
+                                    <div style="color: #64748b; margin-top: 0.5rem; font-size: 0.9rem;">Fee: 2.5%</div>
+                                </div>
+                                <div style="background: #f0f9fc; padding: 1rem; border-radius: 8px; border: 1px solid #e0f2fe;">
+                                    <div style="font-weight: 600; color: #0ea5e9;">Pinnacle</div>
+                                    <div style="color: #64748b; margin-top: 0.5rem; font-size: 0.9rem;">Fee: 0.75%</div>
                                 </div>
                             </div>
-                            <div class="result-box" id="arbResult" style="display: none; margin-top: 1rem;">
-                                <h4>Expected Profit</h4>
-                                <div class="result-value" id="arbProfit">$0</div>
-                                <p style="margin-top: 0.5rem; color: #64748b; font-size: 0.9rem;">Stake P1: <span id="stakeP1">$0</span> | Stake P2: <span id="stakeP2">$0</span></p>
+                        </div>
+
+                        <!-- Manual Arbitrage Calculator -->
+                        <div class="arbitrage-calculator-manual" style="margin-top: 2rem;">
+                            <h3 style="margin-bottom: 1.5rem;">Manual Arbitrage Calculator</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                                <div class="arbitrage-card">
+                                    <h3>Calculate Arbitrage</h3>
+                                    <div class="form-group">
+                                        <label>Platform 1</label>
+                                        <select id="platform1" style="padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px;">
+                                            <option>bet365</option>
+                                            <option>FanDuel</option>
+                                            <option>DraftKings</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Platform 1 Odds</label>
+                                        <input type="number" id="odds1" placeholder="e.g. 1.50" value="1.50" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Platform 2</label>
+                                        <select id="platform2" style="padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px;">
+                                            <option>FanDuel</option>
+                                            <option>DraftKings</option>
+                                            <option>bet365</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Platform 2 Odds</label>
+                                        <input type="number" id="odds2" placeholder="e.g. 2.80" value="2.80" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Total Stake ($)</label>
+                                        <input type="number" id="totalStake" placeholder="e.g. 1000" value="1000" step="50">
+                                    </div>
+                                    <button class="btn btn-primary" onclick="calculateArbitrage()" style="width: 100%;">Calculate</button>
+                                </div>
+
+                                <div class="arbitrage-card">
+                                    <h3>Results</h3>
+                                    <div class="arbitrage-meter">
+                                        <div class="meter-label">
+                                            <span>Arbitrage Opportunity</span>
+                                            <span id="arbPercentage">0%</span>
+                                        </div>
+                                        <div class="meter-bar">
+                                            <div class="meter-fill" id="arbMeter" style="width: 0%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="result-box" id="arbResult" style="display: none; margin-top: 1rem;">
+                                        <h4>Expected Profit</h4>
+                                        <div class="result-value" id="arbProfit">$0</div>
+                                        <p style="margin-top: 0.5rem; color: #64748b; font-size: 0.9rem;">Stake P1: <span id="stakeP1">$0</span> | Stake P2: <span id="stakeP2">$0</span></p>
+                                    </div>
+                                    <div style="background: #f0f9fc; border-left: 4px solid #0ea5e9; padding: 1rem; border-radius: 8px; margin-top: 1rem; font-size: 0.9rem; color: #475569;">
+                                        <strong>Tax Note:</strong> Casual gambling winnings in Canada are TAX FREE.
+                                    </div>
+                                    <button class="btn btn-secondary" onclick="downloadArbitrageSheet()" style="width: 100%; margin-top: 1rem;">📥 Download Spreadsheet</button>
+                                </div>
                             </div>
-                            <div style="background: #f0f9fc; border-left: 4px solid #0ea5e9; padding: 1rem; border-radius: 8px; margin-top: 1rem; font-size: 0.9rem; color: #475569;">
-                                <strong>Tax Note:</strong> Casual gambling winnings in Canada are TAX FREE.
-                            </div>
-                            <button class="btn btn-secondary" onclick="downloadArbitrageSheet()" style="width: 100%; margin-top: 1rem;">📥 Download Spreadsheet</button>
                         </div>
                     </div>
                 </div>
@@ -2002,8 +2311,269 @@
             }
         }
 
+        // ============ LIVE ODDS SCANNER ============
+        const platformFees = {
+            'bet365': 0,
+            'BetMGM': 0.01,
+            'Betway': 0.025,
+            'Pinnacle': 0.0075,
+            'FanDuel': 0.02,
+            'DraftKings': 0.015
+        };
+
+        function generateDemoOdds(sport) {
+            const demoData = {
+                americanfootball_nfl: [
+                    { game: 'Kansas City Chiefs vs Buffalo Bills', time: '2026-03-02 20:30 EST', outcomes: [
+                        { name: 'Chiefs Win', bookmakers: { 'bet365': 1.85, 'BetMGM': 1.83, 'DraftKings': 1.82 } },
+                        { name: 'Bills Win', bookmakers: { 'bet365': 2.05, 'BetMGM': 2.08, 'Betway': 2.10 } }
+                    ]},
+                    { game: 'San Francisco 49ers vs Detroit Lions', time: '2026-03-09 16:00 EST', outcomes: [
+                        { name: '49ers Win', bookmakers: { 'Pinnacle': 1.72, 'bet365': 1.75, 'FanDuel': 1.73 } },
+                        { name: 'Lions Win', bookmakers: { 'BetMGM': 2.15, 'Betway': 2.18, 'DraftKings': 2.12 } }
+                    ]}
+                ],
+                basketball_nba: [
+                    { game: 'Los Angeles Lakers vs Boston Celtics', time: '2026-03-05 22:30 EST', outcomes: [
+                        { name: 'Lakers Win', bookmakers: { 'bet365': 2.20, 'BetMGM': 2.18, 'Pinnacle': 2.19 } },
+                        { name: 'Celtics Win', bookmakers: { 'DraftKings': 1.70, 'Betway': 1.72, 'FanDuel': 1.71 } }
+                    ]},
+                    { game: 'Golden State Warriors vs Denver Nuggets', time: '2026-03-07 21:00 EST', outcomes: [
+                        { name: 'Warriors Win', bookmakers: { 'bet365': 1.95, 'BetMGM': 1.93, 'DraftKings': 1.94 } },
+                        { name: 'Nuggets Win', bookmakers: { 'Pinnacle': 1.88, 'Betway': 1.90, 'FanDuel': 1.89 } }
+                    ]}
+                ],
+                icehockey_nhl: [
+                    { game: 'Toronto Maple Leafs vs Montreal Canadiens', time: '2026-03-08 19:30 EST', outcomes: [
+                        { name: 'Maple Leafs Win', bookmakers: { 'bet365': 1.65, 'BetMGM': 1.63, 'DraftKings': 1.64 } },
+                        { name: 'Canadiens Win', bookmakers: { 'Betway': 2.30, 'Pinnacle': 2.28, 'FanDuel': 2.29 } }
+                    ]},
+                    { game: 'Colorado Avalanche vs Vegas Golden Knights', time: '2026-03-06 22:00 EST', outcomes: [
+                        { name: 'Avalanche Win', bookmakers: { 'bet365': 1.80, 'BetMGM': 1.78, 'Pinnacle': 1.79 } },
+                        { name: 'Knights Win', bookmakers: { 'DraftKings': 2.00, 'Betway': 2.02, 'FanDuel': 2.01 } }
+                    ]}
+                ],
+                baseball_mlb: [
+                    { game: 'New York Yankees vs Boston Red Sox', time: '2026-03-10 13:05 EST', outcomes: [
+                        { name: 'Yankees Win', bookmakers: { 'bet365': 1.75, 'BetMGM': 1.73, 'DraftKings': 1.74 } },
+                        { name: 'Red Sox Win', bookmakers: { 'Pinnacle': 2.10, 'Betway': 2.12, 'FanDuel': 2.11 } }
+                    ]},
+                    { game: 'Los Angeles Dodgers vs San Francisco Giants', time: '2026-03-09 22:05 EST', outcomes: [
+                        { name: 'Dodgers Win', bookmakers: { 'bet365': 1.88, 'BetMGM': 1.86, 'Pinnacle': 1.87 } },
+                        { name: 'Giants Win', bookmakers: { 'DraftKings': 1.95, 'Betway': 1.97, 'FanDuel': 1.96 } }
+                    ]}
+                ],
+                soccer_epl: [
+                    { game: 'Manchester United vs Liverpool FC', time: '2026-03-08 16:00 GMT', outcomes: [
+                        { name: 'Man United Win', bookmakers: { 'bet365': 2.40, 'BetMGM': 2.38, 'DraftKings': 2.39 } },
+                        { name: 'Liverpool Win', bookmakers: { 'Pinnacle': 1.58, 'Betway': 1.60, 'FanDuel': 1.59 } }
+                    ]},
+                    { game: 'Arsenal FC vs Chelsea FC', time: '2026-03-07 14:00 GMT', outcomes: [
+                        { name: 'Arsenal Win', bookmakers: { 'bet365': 1.95, 'BetMGM': 1.93, 'Pinnacle': 1.94 } },
+                        { name: 'Chelsea Win', bookmakers: { 'DraftKings': 1.85, 'Betway': 1.87, 'FanDuel': 1.86 } }
+                    ]}
+                ],
+                mma_mixed_martial_arts: [
+                    { game: 'Conor McGregor vs Dustin Poirier', time: '2026-03-15 22:00 EST', outcomes: [
+                        { name: 'McGregor Win', bookmakers: { 'bet365': 2.10, 'BetMGM': 2.08, 'DraftKings': 2.09 } },
+                        { name: 'Poirier Win', bookmakers: { 'Pinnacle': 1.75, 'Betway': 1.77, 'FanDuel': 1.76 } }
+                    ]},
+                    { game: 'Israel Adesanya vs Sean Strickland', time: '2026-03-12 23:00 EST', outcomes: [
+                        { name: 'Adesanya Win', bookmakers: { 'bet365': 1.60, 'BetMGM': 1.58, 'Pinnacle': 1.59 } },
+                        { name: 'Strickland Win', bookmakers: { 'DraftKings': 2.25, 'Betway': 2.27, 'FanDuel': 2.26 } }
+                    ]}
+                ]
+            };
+            return demoData[sport] || demoData.americanfootball_nfl;
+        }
+
+        async function fetchLiveOdds() {
+            const sport = document.getElementById('sportSelector').value;
+            const dataSource = document.getElementById('dataSourceSelector').value;
+            const resultsDiv = document.getElementById('liveOddsResults');
+            const fetchButton = document.querySelector('.btn-primary');
+            const fetchButtonText = document.getElementById('fetchButtonText');
+            const fetchSpinner = document.getElementById('fetchSpinner');
+
+            // Show loading state
+            resultsDiv.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><p>Fetching odds data...</p></div>';
+            fetchButtonText.textContent = 'Fetching...';
+            fetchSpinner.style.display = 'inline';
+            fetchButton.disabled = true;
+
+            try {
+                let games = [];
+
+                if (dataSource === 'demo') {
+                    // Use demo data
+                    games = generateDemoOdds(sport);
+                } else {
+                    // Try to fetch from The Odds API
+                    const apiKey = 'e4b3c2f1a5d6e7f8b9c0d1e2f3a4b5c6';
+                    const response = await fetch(
+                        `https://api.the-odds-api.com/v4/sports/${sport}/odds/?apiKey=${apiKey}&regions=us,eu&markets=h2h&oddsFormat=decimal`,
+                        { mode: 'cors' }
+                    );
+
+                    if (!response.ok) {
+                        throw new Error('API unavailable - using demo data instead');
+                    }
+
+                    const data = await response.json();
+
+                    // Process API data
+                    games = data.events.slice(0, 5).map(event => {
+                        const outcomes = [];
+                        if (event.bookmakers && event.bookmakers.length > 0) {
+                            const markets = event.bookmakers[0].markets.find(m => m.key === 'h2h');
+                            if (markets) {
+                                outcomes.push({
+                                    name: markets.outcomes[0].name,
+                                    bookmakers: {
+                                        [event.bookmakers[0].title]: markets.outcomes[0].price
+                                    }
+                                });
+                                if (markets.outcomes[1]) {
+                                    outcomes.push({
+                                        name: markets.outcomes[1].name,
+                                        bookmakers: {
+                                            [event.bookmakers[0].title]: markets.outcomes[1].price
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                        return {
+                            game: `${event.home_team} vs ${event.away_team}`,
+                            time: event.commence_time,
+                            outcomes: outcomes
+                        };
+                    });
+                }
+
+                if (games.length === 0) {
+                    resultsDiv.innerHTML = '<div class="error-message">No games found for the selected sport.</div>';
+                } else {
+                    displayArbitrageOpportunities(games);
+                }
+            } catch (error) {
+                // Fallback to demo data on API error
+                const games = generateDemoOdds(sport);
+                resultsDiv.innerHTML = '<div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; color: #92400e;"><strong>Note:</strong> Using demo data (Live API temporarily unavailable). Switch to Demo Data mode for consistent demo experience.</div>';
+                displayArbitrageOpportunities(games);
+            } finally {
+                fetchButtonText.textContent = 'Fetch Live Odds';
+                fetchSpinner.style.display = 'none';
+                fetchButton.disabled = false;
+            }
+        }
+
+        function displayArbitrageOpportunities(games) {
+            const resultsDiv = document.getElementById('liveOddsResults');
+            let html = '';
+
+            games.forEach(game => {
+                if (game.outcomes.length < 2) return;
+
+                const outcome1 = game.outcomes[0];
+                const outcome2 = game.outcomes[1];
+
+                // Get best odds for each outcome
+                const odds1 = Math.max(...Object.values(outcome1.bookmakers));
+                const odds2 = Math.max(...Object.values(outcome2.bookmakers));
+
+                const bookie1 = Object.keys(outcome1.bookmakers)[Object.values(outcome1.bookmakers).indexOf(odds1)];
+                const bookie2 = Object.keys(outcome2.bookmakers)[Object.values(outcome2.bookmakers).indexOf(odds2)];
+
+                // Calculate arbitrage
+                const impliedProb1 = 1 / odds1;
+                const impliedProb2 = 1 / odds2;
+                const totalImplied = impliedProb1 + impliedProb2;
+                const arbPercentage = Math.max(0, (1 - totalImplied) * 100);
+
+                // Calculate stakes and profit
+                const totalStake = 100; // Use $100 for demonstration
+                const stakeP1 = totalStake * impliedProb1 / totalImplied;
+                const stakeP2 = totalStake * impliedProb2 / totalImplied;
+                const profit1 = stakeP1 * odds1 - totalStake;
+                const profit2 = stakeP2 * odds2 - totalStake;
+                const guaranteedProfit = Math.min(profit1, profit2);
+
+                // Apply fees
+                const fee1 = stakeP1 * (platformFees[bookie1] || 0);
+                const fee2 = stakeP2 * (platformFees[bookie2] || 0);
+                const netProfit = guaranteedProfit - fee1 - fee2;
+
+                const hasArbitrage = arbPercentage > 0.5;
+                const badgeClass = hasArbitrage ? 'profit' : 'no-arb';
+                const badgeText = hasArbitrage ? `✓ Arbitrage: ${arbPercentage.toFixed(2)}%` : 'No Arbitrage';
+
+                html += `
+                    <div class="odds-game-card">
+                        <div class="game-info">
+                            <div>
+                                <div class="game-title">${game.game}</div>
+                                <div class="game-time">📅 ${new Date(game.time).toLocaleString()}</div>
+                            </div>
+                            <div class="arbitrage-badge ${badgeClass}">${badgeText}</div>
+                        </div>
+
+                        <div class="odds-bookmakers">
+                            <div class="bookmaker-odds">
+                                <div class="bookmaker-name">${bookie1}</div>
+                                <div class="odds-value">${odds1.toFixed(2)}</div>
+                                <div class="odds-label">${outcome1.name}</div>
+                            </div>
+                            <div class="bookmaker-odds">
+                                <div class="bookmaker-name">${bookie2}</div>
+                                <div class="odds-value">${odds2.toFixed(2)}</div>
+                                <div class="odds-label">${outcome2.name}</div>
+                            </div>
+                        </div>
+
+                        ${hasArbitrage ? `
+                            <div class="arbitrage-details">
+                                <div class="arb-profit-row">
+                                    <span class="arb-label">Stake on ${outcome1.name}:</span>
+                                    <span class="arb-value">$${stakeP1.toFixed(2)}</span>
+                                </div>
+                                <div class="arb-profit-row">
+                                    <span class="arb-label">Stake on ${outcome2.name}:</span>
+                                    <span class="arb-value">$${stakeP2.toFixed(2)}</span>
+                                </div>
+                                <div class="arb-profit-row">
+                                    <span class="arb-label">Total Stake:</span>
+                                    <span class="arb-value">$${totalStake.toFixed(2)}</span>
+                                </div>
+                                <div style="border-top: 1px solid #ccc; margin: 0.75rem 0; padding-top: 0.75rem;">
+                                    <div class="arb-profit-row">
+                                        <span class="arb-label">Guaranteed Profit (before fees):</span>
+                                        <span class="arb-value arb-profit-green">$${guaranteedProfit.toFixed(2)}</span>
+                                    </div>
+                                    <div class="arb-profit-row">
+                                        <span class="arb-label">${bookie1} Fee:</span>
+                                        <span class="arb-value">-$${fee1.toFixed(2)}</span>
+                                    </div>
+                                    <div class="arb-profit-row">
+                                        <span class="arb-label">${bookie2} Fee:</span>
+                                        <span class="arb-value">-$${fee2.toFixed(2)}</span>
+                                    </div>
+                                    <div class="arb-profit-row" style="font-weight: 700; border-top: 1px dashed #ccc; padding-top: 0.5rem; margin-top: 0.5rem;">
+                                        <span class="arb-label">Net Profit After Fees:</span>
+                                        <span class="arb-value arb-profit-green">$${Math.max(0, netProfit).toFixed(2)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            resultsDiv.innerHTML = html || '<div class="error-message">No arbitrage opportunities found with current odds.</div>';
+        }
+
         function downloadArbitrageSheet() {
-            alert('Spreadsheet download link: Canadian_Betting_Arbitrage_Analysis.xlsx\n\nPlease implement actual file download based on your server setup.');
+            window.open('Canadian_Betting_Arbitrage_Analysis.xlsx', '_blank');
         }
 
         // ============ TIC TAC TOE GAME ============

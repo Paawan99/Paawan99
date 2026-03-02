@@ -1568,9 +1568,11 @@
                         <!-- Snake Game -->
                         <div class="game-card">
                             <h3>Snake Game</h3>
-                            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1rem;">Use arrow keys or buttons</p>
+                            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 0.5rem;">Use arrow keys or buttons</p>
                             <canvas id="snakeCanvas" class="snake-canvas" width="300" height="300"></canvas>
                             <div id="snakeScore" style="text-align: center; color: #0ea5e9; font-weight: 600; margin: 0.5rem 0;">Score: 0</div>
+                            <div id="snakeMessage" style="text-align: center; color: #ef4444; font-weight: 600; min-height: 1.5rem;"></div>
+                            <button class="btn" onclick="startSnakeGame()" id="snakeStartBtn" style="width: 100%; margin-bottom: 0.5rem;">Start Game</button>
                             <div class="snake-controls">
                                 <div></div>
                                 <button class="snake-btn" onclick="snakeChangeDirection('up')">↑</button>
@@ -1881,10 +1883,19 @@
             });
         }
 
-        // Keyboard navigation
+        // Keyboard navigation — snake game takes priority when active on Games slide
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') nextSlide();
-            if (e.key === 'ArrowLeft') previousSlide();
+            if (snakeGameRunning && currentSlide === 4) {
+                // Snake game is active on Games slide — route arrows to snake
+                if (e.key === 'ArrowUp') { e.preventDefault(); snakeChangeDirection('up'); }
+                else if (e.key === 'ArrowDown') { e.preventDefault(); snakeChangeDirection('down'); }
+                else if (e.key === 'ArrowLeft') { e.preventDefault(); snakeChangeDirection('left'); }
+                else if (e.key === 'ArrowRight') { e.preventDefault(); snakeChangeDirection('right'); }
+            } else {
+                // Normal slideshow navigation
+                if (e.key === 'ArrowRight') nextSlide();
+                if (e.key === 'ArrowLeft') previousSlide();
+            }
         });
 
         // Touch swipe
@@ -2040,22 +2051,62 @@
         // ============ SNAKE GAME ============
         const snakeCanvas = document.getElementById('snakeCanvas');
         const ctx = snakeCanvas.getContext('2d');
-        let snake = [{x: 10, y: 10}];
-        let food = {x: 15, y: 15};
+        let snake = [{x: 7, y: 7}];
+        let food = {x: 12, y: 12};
         let direction = {x: 1, y: 0};
         let nextDirection = {x: 1, y: 0};
         let snakeScore = 0;
-        let snakeGameRunning = true;
+        let snakeGameRunning = false;
+        let snakeGameStarted = false;
+        let snakeInterval = null;
 
         function drawSnake() {
             ctx.clearRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+            // Draw grid background
+            ctx.fillStyle = '#f1f5f9';
+            ctx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+            ctx.strokeStyle = '#e2e8f0';
+            for (let i = 0; i <= 15; i++) {
+                ctx.beginPath(); ctx.moveTo(i * 20, 0); ctx.lineTo(i * 20, 300); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(0, i * 20); ctx.lineTo(300, i * 20); ctx.stroke();
+            }
+            // Draw snake
             ctx.fillStyle = '#0ea5e9';
-            snake.forEach(segment => {
-                ctx.fillRect(segment.x * 20, segment.y * 20, 18, 18);
+            snake.forEach((segment, i) => {
+                ctx.fillStyle = i === 0 ? '#0284c7' : '#0ea5e9';
+                ctx.fillRect(segment.x * 20 + 1, segment.y * 20 + 1, 18, 18);
             });
+            // Draw food
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.arc(food.x * 20 + 10, food.y * 20 + 10, 8, 0, Math.PI * 2);
+            ctx.fill();
+            // Draw "Press Start" if not started
+            if (!snakeGameStarted) {
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.fillRect(0, 0, 300, 300);
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 18px system-ui';
+                ctx.textAlign = 'center';
+                ctx.fillText('Click "Start Game" to play!', 150, 155);
+                ctx.textAlign = 'start';
+            }
+        }
 
-            ctx.fillStyle = '#ff6b6b';
-            ctx.fillRect(food.x * 20, food.y * 20, 18, 18);
+        function startSnakeGame() {
+            snake = [{x: 7, y: 7}];
+            direction = {x: 1, y: 0};
+            nextDirection = {x: 1, y: 0};
+            snakeScore = 0;
+            snakeGameRunning = true;
+            snakeGameStarted = true;
+            document.getElementById('snakeScore').textContent = 'Score: 0';
+            document.getElementById('snakeMessage').textContent = '';
+            document.getElementById('snakeStartBtn').textContent = 'Restart Game';
+            food = {x: Math.floor(Math.random() * 15), y: Math.floor(Math.random() * 15)};
+            if (snakeInterval) clearInterval(snakeInterval);
+            snakeInterval = setInterval(updateSnake, 200);
+            drawSnake();
         }
 
         function updateSnake() {
@@ -2064,10 +2115,25 @@
             direction = nextDirection;
             const head = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
 
+            // Check wall collision
             if (head.x < 0 || head.x >= 15 || head.y < 0 || head.y >= 15) {
                 snakeGameRunning = false;
-                alert('Game Over! Score: ' + snakeScore);
-                resetSnake();
+                snakeGameStarted = false;
+                if (snakeInterval) { clearInterval(snakeInterval); snakeInterval = null; }
+                document.getElementById('snakeMessage').textContent = 'Game Over! Score: ' + snakeScore;
+                document.getElementById('snakeStartBtn').textContent = 'Play Again';
+                drawSnake();
+                return;
+            }
+
+            // Check self collision
+            if (snake.some(s => s.x === head.x && s.y === head.y)) {
+                snakeGameRunning = false;
+                snakeGameStarted = false;
+                if (snakeInterval) { clearInterval(snakeInterval); snakeInterval = null; }
+                document.getElementById('snakeMessage').textContent = 'Game Over! Score: ' + snakeScore;
+                document.getElementById('snakeStartBtn').textContent = 'Play Again';
+                drawSnake();
                 return;
             }
 
@@ -2084,30 +2150,13 @@
         }
 
         function snakeChangeDirection(dir) {
+            if (!snakeGameRunning) return;
             if (dir === 'up' && direction.y === 0) nextDirection = {x: 0, y: -1};
             if (dir === 'down' && direction.y === 0) nextDirection = {x: 0, y: 1};
             if (dir === 'left' && direction.x === 0) nextDirection = {x: -1, y: 0};
             if (dir === 'right' && direction.x === 0) nextDirection = {x: 1, y: 0};
         }
 
-        function resetSnake() {
-            snake = [{x: 10, y: 10}];
-            direction = {x: 1, y: 0};
-            nextDirection = {x: 1, y: 0};
-            snakeScore = 0;
-            snakeGameRunning = true;
-            document.getElementById('snakeScore').textContent = 'Score: 0';
-            drawSnake();
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowUp') snakeChangeDirection('up');
-            if (e.key === 'ArrowDown') snakeChangeDirection('down');
-            if (e.key === 'ArrowLeft') snakeChangeDirection('left');
-            if (e.key === 'ArrowRight') snakeChangeDirection('right');
-        });
-
-        setInterval(updateSnake, 200);
         drawSnake();
 
         // ============ NUMBER GUESSING GAME ============

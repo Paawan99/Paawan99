@@ -1,0 +1,2329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paawan - Financial Analysis Portfolio</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', system-ui, sans-serif;
+            background: #f8fafc;
+            color: #1f2937;
+            overflow: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0ea5e9, #00bcd4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: #f0f9fc;
+            border: 1px solid #cffafe;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            color: #0f766e;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: #0ea5e9;
+            color: white;
+            border-color: #0ea5e9;
+        }
+
+        .nav-link.active {
+            background: #0ea5e9;
+            color: white;
+            border-color: #0ea5e9;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 6px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #0ea5e9;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                flex-wrap: wrap;
+                padding: 1rem;
+            }
+
+            .nav-logo {
+                font-size: 1.2rem;
+                flex-basis: 100%;
+                text-align: center;
+            }
+
+            .hamburger {
+                display: flex;
+                position: absolute;
+                right: 1rem;
+                top: 1rem;
+            }
+
+            .nav-links {
+                position: absolute;
+                top: 60px;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 1rem;
+                gap: 0.5rem;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+            }
+
+            .nav-links.active {
+                max-height: 300px;
+            }
+
+            .nav-link {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        /* Main Container */
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            margin-top: 60px;
+        }
+
+        .slides-wrapper {
+            display: flex;
+            height: calc(100vh - 60px);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: white;
+            overflow-y: auto;
+        }
+
+        .slide-content {
+            width: 100%;
+            max-width: 1200px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Navigation Buttons */
+        .nav-button {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(14, 165, 233, 0.8);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-button:hover {
+            background: rgba(14, 165, 233, 1);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nav-button.prev {
+            left: 1rem;
+        }
+
+        .nav-button.next {
+            right: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-button {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .nav-button.prev {
+                left: 0.5rem;
+            }
+
+            .nav-button.next {
+                right: 0.5rem;
+            }
+        }
+
+        /* Dot Navigation */
+        .dots-container {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.75rem;
+            z-index: 100;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(14, 165, 233, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #0ea5e9;
+        }
+
+        .dot.active {
+            background: #0ea5e9;
+            transform: scale(1.3);
+        }
+
+        @media (max-width: 768px) {
+            .dots-container {
+                bottom: 1rem;
+                gap: 0.5rem;
+            }
+
+            .dot {
+                width: 10px;
+                height: 10px;
+            }
+        }
+
+        /* Slide Styles */
+        .hero {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0ea5e9, #00bcd4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #64748b;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0ea5e9, #00bcd4);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f9fc;
+            color: #0f766e;
+            border: 2px solid #00bcd4;
+        }
+
+        .btn-secondary:hover {
+            background: #00bcd4;
+            color: white;
+        }
+
+        .feature-icons {
+            display: flex;
+            gap: 3rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .feature-icon {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .feature-icon .icon {
+            font-size: 3rem;
+        }
+
+        .feature-icon p {
+            font-size: 0.95rem;
+            color: #64748b;
+        }
+
+        /* Portfolio Grid */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .project-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
+            border-color: #0ea5e9;
+        }
+
+        .project-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: #1f2937;
+        }
+
+        .project-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #cffafe;
+            color: #0f766e;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Calculators */
+        .calculators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .calculator-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .calculator-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: #1f2937;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: #475569;
+        }
+
+        .form-group input {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #f0f9fc, #cffafe);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 4px solid #0ea5e9;
+        }
+
+        .result-box h4 {
+            color: #0f766e;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-box .result-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0ea5e9;
+        }
+
+        /* Betting Cards */
+        .betting-scroll {
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto;
+            padding: 1rem 0;
+            scroll-behavior: smooth;
+        }
+
+        .betting-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .betting-scroll::-webkit-scrollbar-track {
+            background: #f0f9fc;
+            border-radius: 10px;
+        }
+
+        .betting-scroll::-webkit-scrollbar-thumb {
+            background: #0ea5e9;
+            border-radius: 10px;
+        }
+
+        .betting-card {
+            flex: 0 0 280px;
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .betting-card h4 {
+            font-size: 1.1rem;
+            color: #1f2937;
+        }
+
+        .betting-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .betting-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .betting-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .betting-value {
+            color: #0ea5e9;
+            font-weight: 600;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            width: fit-content;
+        }
+
+        .badge-private {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-offshore {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-provincial {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Arbitrage Calculator */
+        .arbitrage-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .arbitrage-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .arbitrage-meter {
+            margin-top: 1.5rem;
+        }
+
+        .meter-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .meter-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .meter-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0ea5e9, #00bcd4);
+            transition: width 0.3s ease;
+        }
+
+        /* Games Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .game-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .game-card h3 {
+            font-size: 1.25rem;
+            color: #1f2937;
+        }
+
+        /* Tic Tac Toe */
+        .tictactoe-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .tictactoe-cell {
+            aspect-ratio: 1;
+            border: 2px solid #0ea5e9;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-size: 1.5rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tictactoe-cell:hover {
+            background: #f0f9fc;
+        }
+
+        .tictactoe-cell.x {
+            color: #0ea5e9;
+        }
+
+        .tictactoe-cell.o {
+            color: #00bcd4;
+        }
+
+        /* Snake Game */
+        .snake-canvas {
+            width: 100%;
+            max-width: 300px;
+            border: 2px solid #0ea5e9;
+            border-radius: 8px;
+            background: white;
+            display: block;
+            margin: 1rem auto;
+        }
+
+        .snake-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 50px);
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .snake-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background: #0ea5e9;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .snake-btn:active {
+            background: #00bcd4;
+            transform: scale(0.95);
+        }
+
+        /* Number Guessing */
+        .guessing-game {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .guess-input {
+            padding: 0.75rem;
+            border: 2px solid #0ea5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            width: 150px;
+            text-align: center;
+        }
+
+        .guess-result {
+            min-height: 60px;
+            padding: 1rem;
+            background: #f0f9fc;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #cffafe;
+        }
+
+        /* Memory Cards */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #0ea5e9, #00bcd4);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            position: relative;
+        }
+
+        .memory-card.flipped {
+            background: #f0f9fc;
+            border: 2px solid #0ea5e9;
+        }
+
+        .memory-card.matched {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        /* Content Cards */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .content-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .content-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
+            border-color: #0ea5e9;
+        }
+
+        .content-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            color: #1f2937;
+        }
+
+        .content-card p {
+            font-size: 0.95rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* AI Agents Section */
+        .ai-search {
+            margin-bottom: 2rem;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .search-box button {
+            padding: 0.75rem 1.5rem;
+            background: #0ea5e9;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .search-box button:hover {
+            background: #00bcd4;
+        }
+
+        .ai-tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 2rem;
+        }
+
+        .ai-tab {
+            padding: 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .ai-tab.active {
+            color: #0ea5e9;
+        }
+
+        .ai-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #0ea5e9;
+        }
+
+        .ai-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .ai-metric {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .ai-metric-label {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ai-metric-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #0ea5e9;
+        }
+
+        .ai-insights {
+            background: #f0f9fc;
+            border-left: 4px solid #0ea5e9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            line-height: 1.6;
+            color: #475569;
+        }
+
+        /* Analytics Dashboard */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f0f9fc, #cffafe);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid #cffafe;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0ea5e9, #00bcd4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .skills-section {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .skills-section h3 {
+            margin-bottom: 1.5rem;
+            color: #1f2937;
+        }
+
+        .skill-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .skill-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .skill-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .skill-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #0ea5e9, #00bcd4);
+            transition: width 0.5s ease;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: #64748b;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .feature-icons {
+                gap: 1.5rem;
+            }
+
+            .calculators-grid, .portfolio-grid, .games-grid, .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .arbitrage-section {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 1.75rem;
+            }
+
+            .slide {
+                padding: 1rem;
+            }
+
+            .memory-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .snake-controls {
+                grid-template-columns: repeat(3, 40px);
+            }
+
+            .snake-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 0.8rem;
+            }
+
+            .betting-card {
+                flex: 0 0 240px;
+            }
+
+            .ai-metrics {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav {
+                padding: 0.75rem;
+            }
+
+            .nav-logo {
+                font-size: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 1.5rem;
+            }
+
+            .button-group {
+                gap: 0.5rem;
+            }
+
+            .btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+
+            .feature-icons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .feature-icon .icon {
+                font-size: 2rem;
+            }
+
+            .calculator-card, .project-card, .content-card {
+                padding: 1.5rem;
+            }
+
+            .memory-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.5rem;
+            }
+
+            .memory-card {
+                font-size: 1.5rem;
+            }
+
+            .betting-card {
+                flex: 0 0 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-logo">Paawan</div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="nav-links" id="navLinks">
+            <button class="nav-link active" onclick="goToSlide(0)">Home</button>
+            <button class="nav-link" onclick="goToSlide(1)">Portfolio</button>
+            <button class="nav-link" onclick="goToSlide(2)">Tools</button>
+            <button class="nav-link" onclick="goToSlide(3)">Betting</button>
+            <button class="nav-link" onclick="goToSlide(4)">Games</button>
+            <button class="nav-link" onclick="goToSlide(5)">Content</button>
+            <button class="nav-link" onclick="goToSlide(6)">AI</button>
+            <button class="nav-link" onclick="goToSlide(7)">Analytics</button>
+        </div>
+    </nav>
+
+    <!-- Main Slideshow -->
+    <div class="slideshow-container">
+        <div class="slides-wrapper" id="slidesWrapper">
+            <!-- Slide 1: Home -->
+            <div class="slide">
+                <div class="slide-content">
+                    <div class="hero">
+                        <h1>Paawan</h1>
+                        <p>Passionate about financial markets and data-driven decision making. Explore my portfolio of analysis tools, investment frameworks, and interactive financial calculators.</p>
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="goToSlide(2)">Explore Analysis</button>
+                            <button class="btn btn-secondary" onclick="goToSlide(1)">View Portfolio</button>
+                        </div>
+                        <div class="feature-icons">
+                            <div class="feature-icon">
+                                <div class="icon">📊</div>
+                                <p>Market Analysis</p>
+                            </div>
+                            <div class="feature-icon">
+                                <div class="icon">💼</div>
+                                <p>Portfolio Strategy</p>
+                            </div>
+                            <div class="feature-icon">
+                                <div class="icon">📈</div>
+                                <p>Data Insights</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2: Portfolio -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2 class="section-title">My Portfolio</h2>
+                    <p class="section-subtitle">6 Featured Projects</p>
+                    <div class="portfolio-grid">
+                        <div class="project-card">
+                            <h3>Stock Analysis Framework</h3>
+                            <div class="project-tags">
+                                <span class="tag">Data Analysis</span>
+                                <span class="tag">Finance</span>
+                            </div>
+                        </div>
+                        <div class="project-card">
+                            <h3>M&A Valuation Model</h3>
+                            <div class="project-tags">
+                                <span class="tag">Financial Modeling</span>
+                                <span class="tag">Python</span>
+                            </div>
+                        </div>
+                        <div class="project-card">
+                            <h3>Market Analysis Dashboard</h3>
+                            <div class="project-tags">
+                                <span class="tag">Visualization</span>
+                                <span class="tag">Web Dev</span>
+                            </div>
+                        </div>
+                        <div class="project-card">
+                            <h3>Portfolio Optimization</h3>
+                            <div class="project-tags">
+                                <span class="tag">Finance Theory</span>
+                                <span class="tag">Analytics</span>
+                            </div>
+                        </div>
+                        <div class="project-card">
+                            <h3>Risk Assessment Tools</h3>
+                            <div class="project-tags">
+                                <span class="tag">Risk Analysis</span>
+                                <span class="tag">Mathematics</span>
+                            </div>
+                        </div>
+                        <div class="project-card">
+                            <h3>Market Research Project</h3>
+                            <div class="project-tags">
+                                <span class="tag">Research</span>
+                                <span class="tag">Industry Analysis</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Analysis Tools -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2 class="section-title">Analysis Tools</h2>
+                    <p class="section-subtitle">Interactive Financial Calculators</p>
+                    <div class="calculators-grid">
+                        <!-- M&A Calculator -->
+                        <div class="calculator-card">
+                            <h3>Merger Impact Calculator</h3>
+                            <div class="form-group">
+                                <label>Company A Price ($)</label>
+                                <input type="number" id="companyAPrice" placeholder="e.g. 50" value="50" step="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Company A Shares (M)</label>
+                                <input type="number" id="companyAShares" placeholder="e.g. 100" value="100" step="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Company B Price ($)</label>
+                                <input type="number" id="companyBPrice" placeholder="e.g. 30" value="30" step="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Company B Shares (M)</label>
+                                <input type="number" id="companyBShares" placeholder="e.g. 80" value="80" step="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Synergies ($M)</label>
+                                <input type="number" id="synergies" placeholder="e.g. 200" value="200" step="10">
+                            </div>
+                            <div class="form-group">
+                                <label>Integration Costs ($M)</label>
+                                <input type="number" id="integrationCosts" placeholder="e.g. 100" value="100" step="10">
+                            </div>
+                            <button class="btn btn-primary" onclick="calculateMA()" style="width: 100%;">Calculate</button>
+                            <div class="result-box" id="maResult" style="display: none;">
+                                <h4>Combined Value</h4>
+                                <div class="result-value" id="maResultValue">$0</div>
+                            </div>
+                        </div>
+
+                        <!-- Stock Valuation -->
+                        <div class="calculator-card">
+                            <h3>Stock Valuation Model</h3>
+                            <div class="form-group">
+                                <label>Current Stock Price ($)</label>
+                                <input type="number" id="stockPrice" placeholder="e.g. 100" value="100" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>EPS ($)</label>
+                                <input type="number" id="eps" placeholder="e.g. 5" value="5" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Dividend Yield (%)</label>
+                                <input type="number" id="dividendYield" placeholder="e.g. 2" value="2" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Growth Rate (%)</label>
+                                <input type="number" id="growthRate" placeholder="e.g. 8" value="8" step="0.1">
+                            </div>
+                            <button class="btn btn-primary" onclick="calculateValuation()" style="width: 100%;">Calculate</button>
+                            <div class="result-box" id="valuationResult" style="display: none;">
+                                <h4>Fair Value Estimate</h4>
+                                <div class="result-value" id="valuationResultValue">$0</div>
+                            </div>
+                        </div>
+
+                        <!-- Portfolio Projector -->
+                        <div class="calculator-card">
+                            <h3>Portfolio Growth Projector</h3>
+                            <div class="form-group">
+                                <label>Initial Investment ($)</label>
+                                <input type="number" id="initialInvestment" placeholder="e.g. 10000" value="10000" step="100">
+                            </div>
+                            <div class="form-group">
+                                <label>Annual Return Rate (%)</label>
+                                <input type="number" id="returnRate" placeholder="e.g. 7" value="7" step="0.1">
+                            </div>
+                            <div class="form-group">
+                                <label>Years</label>
+                                <input type="number" id="years" placeholder="e.g. 10" value="10" step="1">
+                            </div>
+                            <div class="form-group">
+                                <label>Annual Contribution ($)</label>
+                                <input type="number" id="annualContribution" placeholder="e.g. 1000" value="1000" step="100">
+                            </div>
+                            <button class="btn btn-primary" onclick="calculatePortfolio()" style="width: 100%;">Calculate</button>
+                            <div class="result-box" id="portfolioResult" style="display: none;">
+                                <h4>Future Value</h4>
+                                <div class="result-value" id="portfolioResultValue">$0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: Betting Arbitrage -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2 class="section-title">Betting Arbitrage Analysis</h2>
+                    <p class="section-subtitle">Canadian Betting Platforms & Opportunities</p>
+
+                    <div class="betting-scroll" id="bettingScroll">
+                        <div class="betting-card">
+                            <div class="badge badge-private">PRIVATE</div>
+                            <h4>bet365</h4>
+                            <div class="betting-info">
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Provinces</span>
+                                    <span class="betting-value">ON, AB</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Min Deposit</span>
+                                    <span class="betting-value">$10</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Withdrawal</span>
+                                    <span class="betting-value">1-3 days</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Fees</span>
+                                    <span class="betting-value">None</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="betting-card">
+                            <div class="badge badge-private">PRIVATE</div>
+                            <h4>FanDuel</h4>
+                            <div class="betting-info">
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Provinces</span>
+                                    <span class="betting-value">ON, AB</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Min Deposit</span>
+                                    <span class="betting-value">$5</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Withdrawal</span>
+                                    <span class="betting-value">2-5 days</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Fees</span>
+                                    <span class="betting-value">None</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="betting-card">
+                            <div class="badge badge-private">PRIVATE</div>
+                            <h4>DraftKings</h4>
+                            <div class="betting-info">
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Provinces</span>
+                                    <span class="betting-value">ON, AB</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Min Deposit</span>
+                                    <span class="betting-value">$5</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Withdrawal</span>
+                                    <span class="betting-value">1-5 days</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Fees</span>
+                                    <span class="betting-value">None</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="betting-card">
+                            <div class="badge badge-private">PRIVATE</div>
+                            <h4>BetMGM</h4>
+                            <div class="betting-info">
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Provinces</span>
+                                    <span class="betting-value">ON, AB</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Min Deposit</span>
+                                    <span class="betting-value">$10</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Withdrawal</span>
+                                    <span class="betting-value">2-5 days</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Fees</span>
+                                    <span class="betting-value">1% deposit</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="betting-card">
+                            <div class="badge badge-private">PRIVATE</div>
+                            <h4>PointsBet</h4>
+                            <div class="betting-info">
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Provinces</span>
+                                    <span class="betting-value">ON, AB</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Min Deposit</span>
+                                    <span class="betting-value">$10</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Withdrawal</span>
+                                    <span class="betting-value">1-3 days</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Fees</span>
+                                    <span class="betting-value">None</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="betting-card">
+                            <div class="badge badge-offshore">OFFSHORE</div>
+                            <h4>Betway</h4>
+                            <div class="betting-info">
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Provinces</span>
+                                    <span class="betting-value">All</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Min Deposit</span>
+                                    <span class="betting-value">$10</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Withdrawal</span>
+                                    <span class="betting-value">2-7 days</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Fees</span>
+                                    <span class="betting-value">2-3%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="betting-card">
+                            <div class="badge badge-provincial">PROVINCIAL</div>
+                            <h4>OLG Proline+</h4>
+                            <div class="betting-info">
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Provinces</span>
+                                    <span class="betting-value">ON</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Min Deposit</span>
+                                    <span class="betting-value">$20</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Withdrawal</span>
+                                    <span class="betting-value">3-5 days</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Fees</span>
+                                    <span class="betting-value">None</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="betting-card">
+                            <div class="badge badge-provincial">PROVINCIAL</div>
+                            <h4>PlayNow BCLC</h4>
+                            <div class="betting-info">
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Provinces</span>
+                                    <span class="betting-value">BC</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Min Deposit</span>
+                                    <span class="betting-value">$20</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Withdrawal</span>
+                                    <span class="betting-value">2-4 days</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Fees</span>
+                                    <span class="betting-value">None</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="betting-card">
+                            <div class="badge badge-offshore">OFFSHORE</div>
+                            <h4>Pinnacle</h4>
+                            <div class="betting-info">
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Provinces</span>
+                                    <span class="betting-value">All</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Min Deposit</span>
+                                    <span class="betting-value">$5</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Withdrawal</span>
+                                    <span class="betting-value">1-2 days</span>
+                                </div>
+                                <div class="betting-info-row">
+                                    <span class="betting-label">Fees</span>
+                                    <span class="betting-value">0.5-1%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="arbitrage-section">
+                        <div class="arbitrage-card">
+                            <h3>Arbitrage Calculator</h3>
+                            <div class="form-group">
+                                <label>Platform 1</label>
+                                <select id="platform1" style="padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px;">
+                                    <option>bet365</option>
+                                    <option>FanDuel</option>
+                                    <option>DraftKings</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Platform 1 Odds</label>
+                                <input type="number" id="odds1" placeholder="e.g. 1.50" value="1.50" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>Platform 2</label>
+                                <select id="platform2" style="padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px;">
+                                    <option>FanDuel</option>
+                                    <option>DraftKings</option>
+                                    <option>bet365</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Platform 2 Odds</label>
+                                <input type="number" id="odds2" placeholder="e.g. 2.80" value="2.80" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label>Total Stake ($)</label>
+                                <input type="number" id="totalStake" placeholder="e.g. 1000" value="1000" step="50">
+                            </div>
+                            <button class="btn btn-primary" onclick="calculateArbitrage()" style="width: 100%;">Calculate</button>
+                        </div>
+
+                        <div class="arbitrage-card">
+                            <h3>Arbitrage Results</h3>
+                            <div class="arbitrage-meter">
+                                <div class="meter-label">
+                                    <span>Arbitrage Opportunity</span>
+                                    <span id="arbPercentage">0%</span>
+                                </div>
+                                <div class="meter-bar">
+                                    <div class="meter-fill" id="arbMeter" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="result-box" id="arbResult" style="display: none; margin-top: 1rem;">
+                                <h4>Expected Profit</h4>
+                                <div class="result-value" id="arbProfit">$0</div>
+                                <p style="margin-top: 0.5rem; color: #64748b; font-size: 0.9rem;">Stake P1: <span id="stakeP1">$0</span> | Stake P2: <span id="stakeP2">$0</span></p>
+                            </div>
+                            <div style="background: #f0f9fc; border-left: 4px solid #0ea5e9; padding: 1rem; border-radius: 8px; margin-top: 1rem; font-size: 0.9rem; color: #475569;">
+                                <strong>Tax Note:</strong> Casual gambling winnings in Canada are TAX FREE.
+                            </div>
+                            <button class="btn btn-secondary" onclick="downloadArbitrageSheet()" style="width: 100%; margin-top: 1rem;">📥 Download Spreadsheet</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 5: Games -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2 class="section-title">Mini Games</h2>
+                    <p class="section-subtitle">Play Interactive Games</p>
+                    <div class="games-grid">
+                        <!-- Tic Tac Toe -->
+                        <div class="game-card">
+                            <h3>Tic Tac Toe</h3>
+                            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1rem;">Play against simple AI</p>
+                            <div class="tictactoe-board" id="tictactoeBoard">
+                                <div class="tictactoe-cell" onclick="playTicTacToe(0)"></div>
+                                <div class="tictactoe-cell" onclick="playTicTacToe(1)"></div>
+                                <div class="tictactoe-cell" onclick="playTicTacToe(2)"></div>
+                                <div class="tictactoe-cell" onclick="playTicTacToe(3)"></div>
+                                <div class="tictactoe-cell" onclick="playTicTacToe(4)"></div>
+                                <div class="tictactoe-cell" onclick="playTicTacToe(5)"></div>
+                                <div class="tictactoe-cell" onclick="playTicTacToe(6)"></div>
+                                <div class="tictactoe-cell" onclick="playTicTacToe(7)"></div>
+                                <div class="tictactoe-cell" onclick="playTicTacToe(8)"></div>
+                            </div>
+                            <div id="tictactoeStatus" style="text-align: center; color: #0ea5e9; font-weight: 600; margin-bottom: 1rem;">Your turn (X)</div>
+                            <button class="btn btn-secondary" onclick="resetTicTacToe()" style="width: 100%;">Reset</button>
+                        </div>
+
+                        <!-- Snake Game -->
+                        <div class="game-card">
+                            <h3>Snake Game</h3>
+                            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1rem;">Use arrow keys or buttons</p>
+                            <canvas id="snakeCanvas" class="snake-canvas" width="300" height="300"></canvas>
+                            <div id="snakeScore" style="text-align: center; color: #0ea5e9; font-weight: 600; margin: 0.5rem 0;">Score: 0</div>
+                            <div class="snake-controls">
+                                <div></div>
+                                <button class="snake-btn" onclick="snakeChangeDirection('up')">↑</button>
+                                <div></div>
+                                <button class="snake-btn" onclick="snakeChangeDirection('left')">←</button>
+                                <button class="snake-btn" onclick="snakeChangeDirection('down')">↓</button>
+                                <button class="snake-btn" onclick="snakeChangeDirection('right')">→</button>
+                            </div>
+                        </div>
+
+                        <!-- Number Guessing -->
+                        <div class="game-card">
+                            <h3>Number Guessing</h3>
+                            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1rem;">Guess a number 1-100</p>
+                            <div class="guessing-game">
+                                <input type="number" class="guess-input" id="guessInput" placeholder="Enter your guess" min="1" max="100">
+                                <button class="btn btn-primary" onclick="submitGuess()" style="width: 150px;">Submit</button>
+                                <div class="guess-result" id="guessResult" style="min-width: 200px;">
+                                    <p style="color: #64748b;">Make your first guess!</p>
+                                </div>
+                                <button class="btn btn-secondary" onclick="resetGuessing()" style="width: 150px;">New Game</button>
+                            </div>
+                        </div>
+
+                        <!-- Memory Cards -->
+                        <div class="game-card">
+                            <h3>Memory Cards</h3>
+                            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1rem;">Match all pairs</p>
+                            <div class="memory-grid" id="memoryGrid"></div>
+                            <div id="memoryStats" style="text-align: center; color: #0ea5e9; font-weight: 600; margin-top: 1rem;">Moves: 0</div>
+                            <button class="btn btn-secondary" onclick="resetMemory()" style="width: 100%; margin-top: 1rem;">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 6: Content -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2 class="section-title">Blog & Content</h2>
+                    <p class="section-subtitle">Financial Insights & Analysis</p>
+                    <div class="content-grid">
+                        <div class="content-card">
+                            <h3>Understanding Market Volatility</h3>
+                            <p>Deep dive into VIX, standard deviation, and how volatility impacts portfolio returns and risk management strategies.</p>
+                        </div>
+                        <div class="content-card">
+                            <h3>Introduction to Technical Analysis</h3>
+                            <p>Learn chart patterns, support/resistance levels, moving averages, and how to identify trading opportunities.</p>
+                        </div>
+                        <div class="content-card">
+                            <h3>Portfolio Diversification Strategies</h3>
+                            <p>Explore asset allocation models, correlation analysis, and optimal portfolio construction across different market conditions.</p>
+                        </div>
+                        <div class="content-card">
+                            <h3>Canadian Sports Betting Landscape</h3>
+                            <p>Analysis of Bill C-218, legal changes, platform comparison, and risk management in sports betting arbitrage.</p>
+                        </div>
+                        <div class="content-card">
+                            <h3>Algorithmic Trading Basics</h3>
+                            <p>Introduction to quantitative trading strategies, backtesting, machine learning, and automated execution systems.</p>
+                        </div>
+                        <div class="content-card">
+                            <h3>Cryptocurrency Market Analysis</h3>
+                            <p>Digital asset valuation, blockchain fundamentals, regulatory considerations, and emerging opportunities in crypto markets.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 7: AI Agents -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2 class="section-title">AI Analysis</h2>
+                    <p class="section-subtitle">Company & Market Analysis</p>
+
+                    <div class="ai-search">
+                        <div class="search-box">
+                            <input type="text" id="companySearch" placeholder="Search company (e.g., AAPL, Tesla)" value="AAPL">
+                            <button onclick="analyzeCompany()">Search</button>
+                        </div>
+                    </div>
+
+                    <div class="ai-tabs">
+                        <button class="ai-tab active" onclick="switchTab(0)">Overview</button>
+                        <button class="ai-tab" onclick="switchTab(1)">Financial</button>
+                        <button class="ai-tab" onclick="switchTab(2)">Sentiment</button>
+                    </div>
+
+                    <div id="overviewTab" style="display: block;">
+                        <div class="ai-metrics">
+                            <div class="ai-metric">
+                                <div class="ai-metric-label">Market Cap</div>
+                                <div class="ai-metric-value">$2.8T</div>
+                            </div>
+                            <div class="ai-metric">
+                                <div class="ai-metric-label">P/E Ratio</div>
+                                <div class="ai-metric-value">28.5</div>
+                            </div>
+                            <div class="ai-metric">
+                                <div class="ai-metric-label">52W High</div>
+                                <div class="ai-metric-value">$238.48</div>
+                            </div>
+                            <div class="ai-metric">
+                                <div class="ai-metric-label">52W Low</div>
+                                <div class="ai-metric-value">$164.08</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 2rem; height: 300px;">
+                            <canvas id="priceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div id="financialTab" style="display: none;">
+                        <div class="ai-metrics">
+                            <div class="ai-metric">
+                                <div class="ai-metric-label">Revenue (TTM)</div>
+                                <div class="ai-metric-value">$395.2B</div>
+                            </div>
+                            <div class="ai-metric">
+                                <div class="ai-metric-label">Net Income</div>
+                                <div class="ai-metric-value">$96.9B</div>
+                            </div>
+                            <div class="ai-metric">
+                                <div class="ai-metric-label">Operating Margin</div>
+                                <div class="ai-metric-value">31.2%</div>
+                            </div>
+                            <div class="ai-metric">
+                                <div class="ai-metric-label">FCF</div>
+                                <div class="ai-metric-value">$102.7B</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 2rem; height: 300px;">
+                            <canvas id="financialChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div id="sentimentTab" style="display: none;">
+                        <div class="ai-metrics">
+                            <div class="ai-metric">
+                                <div class="ai-metric-label">Analyst Rating</div>
+                                <div class="ai-metric-value">4.2/5</div>
+                            </div>
+                            <div class="ai-metric">
+                                <div class="ai-metric-label">Buy Ratings</div>
+                                <div class="ai-metric-value">35/45</div>
+                            </div>
+                            <div class="ai-metric">
+                                <div class="ai-metric-label">Social Sentiment</div>
+                                <div class="ai-metric-value">+72%</div>
+                            </div>
+                            <div class="ai-metric">
+                                <div class="ai-metric-label">News Score</div>
+                                <div class="ai-metric-value">8.1/10</div>
+                            </div>
+                        </div>
+                        <div class="ai-insights">
+                            <strong>Market Sentiment:</strong> Apple maintains strong positive sentiment with consistent analyst upgrades. Recent product launches and services growth driving optimism. Institutional ownership at record levels indicates confidence in long-term growth trajectory.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 8: Analytics -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2 class="section-title">Analytics Dashboard</h2>
+                    <p class="section-subtitle">Portfolio Summary & Metrics</p>
+
+                    <div class="dashboard-grid">
+                        <div class="stat-card">
+                            <h3>Total Projects</h3>
+                            <div class="stat-value">12</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Analysis Tools</h3>
+                            <div class="stat-value">6</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Mini Games</h3>
+                            <div class="stat-value">4</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Blog Posts</h3>
+                            <div class="stat-value">6</div>
+                        </div>
+                    </div>
+
+                    <div class="skills-section">
+                        <h3>Skills & Expertise</h3>
+
+                        <div class="skill-item">
+                            <div class="skill-label">
+                                <span>Financial Analysis</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 95%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="skill-item">
+                            <div class="skill-label">
+                                <span>Data Science & Python</span>
+                                <span>88%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 88%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="skill-item">
+                            <div class="skill-label">
+                                <span>Web Development</span>
+                                <span>82%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 82%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="skill-item">
+                            <div class="skill-label">
+                                <span>Risk Management</span>
+                                <span>91%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 91%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="skill-item">
+                            <div class="skill-label">
+                                <span>Market Research</span>
+                                <span>86%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 86%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="skill-item">
+                            <div class="skill-label">
+                                <span>Quantitative Trading</span>
+                                <span>80%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-progress" style="width: 80%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <button class="nav-button prev" onclick="previousSlide()">❮</button>
+    <button class="nav-button next" onclick="nextSlide()">❯</button>
+
+    <!-- Dots Navigation -->
+    <div class="dots-container" id="dotsContainer"></div>
+
+    <script>
+        // ============ SLIDESHOW LOGIC ============
+        let currentSlide = 0;
+        const totalSlides = 8;
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        function initDots() {
+            const dotsContainer = document.getElementById('dotsContainer');
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'dot';
+                if (i === 0) dot.classList.add('active');
+                dot.onclick = () => goToSlide(i);
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function goToSlide(n) {
+            currentSlide = n % totalSlides;
+            updateSlideshow();
+            closeMenu();
+        }
+
+        function nextSlide() {
+            goToSlide(currentSlide + 1);
+        }
+
+        function previousSlide() {
+            goToSlide(currentSlide - 1);
+        }
+
+        function updateSlideshow() {
+            const wrapper = document.getElementById('slidesWrapper');
+            wrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+            // Update dots
+            document.querySelectorAll('.dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+
+            // Update nav links
+            document.querySelectorAll('.nav-link').forEach((link, i) => {
+                link.classList.toggle('active', i === currentSlide);
+            });
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') previousSlide();
+        });
+
+        // Touch swipe
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchStartX - touchEndX > 50) nextSlide();
+            if (touchEndX - touchStartX > 50) previousSlide();
+        }
+
+        // ============ HAMBURGER MENU ============
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        function closeMenu() {
+            navLinks.classList.remove('active');
+        }
+
+        // ============ CALCULATOR FUNCTIONS ============
+        function calculateMA() {
+            const companyAPrice = parseFloat(document.getElementById('companyAPrice').value) || 0;
+            const companyAShares = parseFloat(document.getElementById('companyAShares').value) || 0;
+            const companyBPrice = parseFloat(document.getElementById('companyBPrice').value) || 0;
+            const companyBShares = parseFloat(document.getElementById('companyBShares').value) || 0;
+            const synergies = parseFloat(document.getElementById('synergies').value) || 0;
+            const integrationCosts = parseFloat(document.getElementById('integrationCosts').value) || 0;
+
+            const marketCapA = companyAPrice * companyAShares;
+            const marketCapB = companyBPrice * companyBShares;
+            const combinedValue = marketCapA + marketCapB + synergies - integrationCosts;
+
+            document.getElementById('maResult').style.display = 'block';
+            document.getElementById('maResultValue').textContent = '$' + combinedValue.toFixed(1) + 'M';
+        }
+
+        function calculateValuation() {
+            const stockPrice = parseFloat(document.getElementById('stockPrice').value) || 0;
+            const eps = parseFloat(document.getElementById('eps').value) || 0;
+            const dividendYield = parseFloat(document.getElementById('dividendYield').value) || 0;
+            const growthRate = parseFloat(document.getElementById('growthRate').value) || 0;
+
+            const peRatio = (10 + growthRate) / 1.5;
+            const fairValue = eps * peRatio;
+
+            document.getElementById('valuationResult').style.display = 'block';
+            document.getElementById('valuationResultValue').textContent = '$' + fairValue.toFixed(2);
+        }
+
+        function calculatePortfolio() {
+            const initialInvestment = parseFloat(document.getElementById('initialInvestment').value) || 0;
+            const returnRate = parseFloat(document.getElementById('returnRate').value) || 0;
+            const years = parseFloat(document.getElementById('years').value) || 0;
+            const annualContribution = parseFloat(document.getElementById('annualContribution').value) || 0;
+
+            const r = returnRate / 100;
+            let futureValue = initialInvestment * Math.pow(1 + r, years);
+
+            if (annualContribution > 0) {
+                futureValue += annualContribution * (Math.pow(1 + r, years) - 1) / r;
+            }
+
+            document.getElementById('portfolioResult').style.display = 'block';
+            document.getElementById('portfolioResultValue').textContent = '$' + futureValue.toFixed(2);
+        }
+
+        // ============ ARBITRAGE CALCULATOR ============
+        function calculateArbitrage() {
+            const odds1 = parseFloat(document.getElementById('odds1').value) || 1;
+            const odds2 = parseFloat(document.getElementById('odds2').value) || 1;
+            const totalStake = parseFloat(document.getElementById('totalStake').value) || 0;
+
+            const impliedProb1 = 1 / odds1;
+            const impliedProb2 = 1 / odds2;
+            const totalImplied = impliedProb1 + impliedProb2;
+            const arbPercentage = Math.max(0, (1 - totalImplied) * 100);
+
+            document.getElementById('arbPercentage').textContent = arbPercentage.toFixed(2) + '%';
+            document.getElementById('arbMeter').style.width = Math.min(arbPercentage * 3, 100) + '%';
+
+            if (arbPercentage > 0) {
+                const stakeP1 = totalStake * impliedProb1 / totalImplied;
+                const stakeP2 = totalStake * impliedProb2 / totalImplied;
+                const profit1 = stakeP1 * odds1 - totalStake;
+                const profit2 = stakeP2 * odds2 - totalStake;
+                const expectedProfit = Math.min(profit1, profit2);
+
+                document.getElementById('arbResult').style.display = 'block';
+                document.getElementById('arbProfit').textContent = '$' + expectedProfit.toFixed(2);
+                document.getElementById('stakeP1').textContent = '$' + stakeP1.toFixed(2);
+                document.getElementById('stakeP2').textContent = '$' + stakeP2.toFixed(2);
+            } else {
+                document.getElementById('arbResult').style.display = 'none';
+            }
+        }
+
+        function downloadArbitrageSheet() {
+            alert('Spreadsheet download link: Canadian_Betting_Arbitrage_Analysis.xlsx\n\nPlease implement actual file download based on your server setup.');
+        }
+
+        // ============ TIC TAC TOE GAME ============
+        let tictactoeBoard = ['', '', '', '', '', '', '', '', ''];
+        let tictactoeTurn = true; // true = X (human), false = O (AI)
+
+        function playTicTacToe(index) {
+            if (tictactoeBoard[index] === '' && tictactoeTurn) {
+                tictactoeBoard[index] = 'X';
+                updateTicTacToeBoard();
+                tictactoeTurn = false;
+                document.getElementById('tictactoeStatus').textContent = 'AI thinking...';
+                setTimeout(aiTicTacToe, 500);
+            }
+        }
+
+        function aiTicTacToe() {
+            let emptySpaces = tictactoeBoard.map((cell, i) => cell === '' ? i : null).filter(i => i !== null);
+            if (emptySpaces.length > 0) {
+                const randomIndex = emptySpaces[Math.floor(Math.random() * emptySpaces.length)];
+                tictactoeBoard[randomIndex] = 'O';
+                updateTicTacToeBoard();
+                tictactoeTurn = true;
+                document.getElementById('tictactoeStatus').textContent = 'Your turn (X)';
+            }
+        }
+
+        function updateTicTacToeBoard() {
+            const cells = document.querySelectorAll('.tictactoe-cell');
+            cells.forEach((cell, i) => {
+                cell.textContent = tictactoeBoard[i];
+                cell.className = 'tictactoe-cell';
+                if (tictactoeBoard[i] === 'X') cell.classList.add('x');
+                if (tictactoeBoard[i] === 'O') cell.classList.add('o');
+            });
+        }
+
+        function resetTicTacToe() {
+            tictactoeBoard = ['', '', '', '', '', '', '', '', ''];
+            tictactoeTurn = true;
+            updateTicTacToeBoard();
+            document.getElementById('tictactoeStatus').textContent = 'Your turn (X)';
+        }
+
+        // ============ SNAKE GAME ============
+        const snakeCanvas = document.getElementById('snakeCanvas');
+        const ctx = snakeCanvas.getContext('2d');
+        let snake = [{x: 10, y: 10}];
+        let food = {x: 15, y: 15};
+        let direction = {x: 1, y: 0};
+        let nextDirection = {x: 1, y: 0};
+        let snakeScore = 0;
+        let snakeGameRunning = true;
+
+        function drawSnake() {
+            ctx.clearRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+            ctx.fillStyle = '#0ea5e9';
+            snake.forEach(segment => {
+                ctx.fillRect(segment.x * 20, segment.y * 20, 18, 18);
+            });
+
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fillRect(food.x * 20, food.y * 20, 18, 18);
+        }
+
+        function updateSnake() {
+            if (!snakeGameRunning) return;
+
+            direction = nextDirection;
+            const head = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
+
+            if (head.x < 0 || head.x >= 15 || head.y < 0 || head.y >= 15) {
+                snakeGameRunning = false;
+                alert('Game Over! Score: ' + snakeScore);
+                resetSnake();
+                return;
+            }
+
+            if (head.x === food.x && head.y === food.y) {
+                snakeScore++;
+                document.getElementById('snakeScore').textContent = 'Score: ' + snakeScore;
+                food = {x: Math.floor(Math.random() * 15), y: Math.floor(Math.random() * 15)};
+            } else {
+                snake.pop();
+            }
+
+            snake.unshift(head);
+            drawSnake();
+        }
+
+        function snakeChangeDirection(dir) {
+            if (dir === 'up' && direction.y === 0) nextDirection = {x: 0, y: -1};
+            if (dir === 'down' && direction.y === 0) nextDirection = {x: 0, y: 1};
+            if (dir === 'left' && direction.x === 0) nextDirection = {x: -1, y: 0};
+            if (dir === 'right' && direction.x === 0) nextDirection = {x: 1, y: 0};
+        }
+
+        function resetSnake() {
+            snake = [{x: 10, y: 10}];
+            direction = {x: 1, y: 0};
+            nextDirection = {x: 1, y: 0};
+            snakeScore = 0;
+            snakeGameRunning = true;
+            document.getElementById('snakeScore').textContent = 'Score: 0';
+            drawSnake();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') snakeChangeDirection('up');
+            if (e.key === 'ArrowDown') snakeChangeDirection('down');
+            if (e.key === 'ArrowLeft') snakeChangeDirection('left');
+            if (e.key === 'ArrowRight') snakeChangeDirection('right');
+        });
+
+        setInterval(updateSnake, 200);
+        drawSnake();
+
+        // ============ NUMBER GUESSING GAME ============
+        let guessingNumber = Math.floor(Math.random() * 100) + 1;
+        let guessAttempts = 0;
+
+        function submitGuess() {
+            const guess = parseInt(document.getElementById('guessInput').value);
+            guessAttempts++;
+
+            let resultText = '';
+            if (guess === guessingNumber) {
+                resultText = `✓ Correct! You found it in ${guessAttempts} attempts!`;
+            } else if (guess < guessingNumber) {
+                resultText = `↑ Too low! Try a higher number. (Attempts: ${guessAttempts})`;
+            } else {
+                resultText = `↓ Too high! Try a lower number. (Attempts: ${guessAttempts})`;
+            }
+
+            document.getElementById('guessResult').innerHTML = `<p>${resultText}</p>`;
+            document.getElementById('guessInput').value = '';
+        }
+
+        function resetGuessing() {
+            guessingNumber = Math.floor(Math.random() * 100) + 1;
+            guessAttempts = 0;
+            document.getElementById('guessInput').value = '';
+            document.getElementById('guessResult').innerHTML = '<p style="color: #64748b;">Make your first guess!</p>';
+        }
+
+        document.getElementById('guessInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') submitGuess();
+        });
+
+        // ============ MEMORY GAME ============
+        const memoryEmojis = ['🎈', '🎉', '🎊', '🎁', '🎭', '🎪', '🎨', '🎬'];
+        let memoryCards = [];
+        let memoryFlipped = [];
+        let memoryMatched = [];
+        let memoryMoves = 0;
+
+        function initMemory() {
+            const grid = document.getElementById('memoryGrid');
+            grid.innerHTML = '';
+            memoryCards = [...memoryEmojis, ...memoryEmojis].sort(() => Math.random() - 0.5);
+            memoryFlipped = [];
+            memoryMatched = [];
+            memoryMoves = 0;
+            document.getElementById('memoryStats').textContent = 'Moves: 0';
+
+            memoryCards.forEach((emoji, i) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.onclick = () => flipMemoryCard(i);
+                grid.appendChild(card);
+            });
+        }
+
+        function flipMemoryCard(index) {
+            if (memoryFlipped.includes(index) || memoryMatched.includes(index)) return;
+
+            memoryFlipped.push(index);
+            const card = document.querySelectorAll('.memory-card')[index];
+            card.classList.add('flipped');
+            card.textContent = memoryCards[index];
+
+            if (memoryFlipped.length === 2) {
+                memoryMoves++;
+                document.getElementById('memoryStats').textContent = 'Moves: ' + memoryMoves;
+
+                setTimeout(() => {
+                    if (memoryCards[memoryFlipped[0]] === memoryCards[memoryFlipped[1]]) {
+                        memoryMatched.push(memoryFlipped[0], memoryFlipped[1]);
+                        document.querySelectorAll('.memory-card')[memoryFlipped[0]].classList.add('matched');
+                        document.querySelectorAll('.memory-card')[memoryFlipped[1]].classList.add('matched');
+
+                        if (memoryMatched.length === memoryCards.length) {
+                            alert('You won in ' + memoryMoves + ' moves!');
+                        }
+                    } else {
+                        document.querySelectorAll('.memory-card')[memoryFlipped[0]].classList.remove('flipped');
+                        document.querySelectorAll('.memory-card')[memoryFlipped[1]].classList.remove('flipped');
+                        document.querySelectorAll('.memory-card')[memoryFlipped[0]].textContent = '';
+                        document.querySelectorAll('.memory-card')[memoryFlipped[1]].textContent = '';
+                    }
+                    memoryFlipped = [];
+                }, 500);
+            }
+        }
+
+        function resetMemory() {
+            initMemory();
+        }
+
+        // ============ AI ANALYSIS TABS ============
+        function switchTab(tabIndex) {
+            document.querySelectorAll('[id$="Tab"]').forEach(tab => tab.style.display = 'none');
+            document.querySelectorAll('.ai-tab').forEach(tab => tab.classList.remove('active'));
+
+            const tabs = ['overviewTab', 'financialTab', 'sentimentTab'];
+            document.getElementById(tabs[tabIndex]).style.display = 'block';
+            document.querySelectorAll('.ai-tab')[tabIndex].classList.add('active');
+        }
+
+        function analyzeCompany() {
+            const company = document.getElementById('companySearch').value || 'AAPL';
+            alert('Analysis for ' + company + ' loaded!');
+        }
+
+        // ============ CHARTS ============
+        let priceChart = null;
+        let financialChart = null;
+
+        function initCharts() {
+            const priceCtx = document.getElementById('priceChart');
+            if (priceCtx && !priceChart) {
+                priceChart = new Chart(priceCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Stock Price ($)',
+                            data: [180, 195, 175, 210, 225, 238],
+                            borderColor: '#0ea5e9',
+                            backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                labels: { color: '#64748b' }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                ticks: { color: '#64748b' },
+                                grid: { color: '#e2e8f0' }
+                            },
+                            x: {
+                                ticks: { color: '#64748b' },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const financialCtx = document.getElementById('financialChart');
+            if (financialCtx && !financialChart) {
+                financialChart = new Chart(financialCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                        datasets: [{
+                            label: 'Revenue ($B)',
+                            data: [89.5, 98.2, 101.8, 105.7],
+                            backgroundColor: '#0ea5e9'
+                        }, {
+                            label: 'Profit ($B)',
+                            data: [22.1, 25.8, 26.4, 28.5],
+                            backgroundColor: '#00bcd4'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                labels: { color: '#64748b' }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: { color: '#64748b' },
+                                grid: { color: '#e2e8f0' }
+                            },
+                            x: {
+                                ticks: { color: '#64748b' },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // ============ INITIALIZATION ============
+        document.addEventListener('DOMContentLoaded', () => {
+            initDots();
+            initMemory();
+            updateSlideshow();
+
+            // Initialize charts when AI slide is visible
+            setTimeout(() => {
+                initCharts();
+            }, 100);
+        });
+
+        // Update charts when switching to AI tab
+        const originalSwitchTab = switchTab;
+        switchTab = function(tabIndex) {
+            originalSwitchTab(tabIndex);
+            if (tabIndex === 0 || tabIndex === 1) {
+                setTimeout(() => {
+                    if (priceChart) priceChart.resize();
+                    if (financialChart) financialChart.resize();
+                }, 100);
+            }
+        };
+    </script>
+</body>
+</html>
